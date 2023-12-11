@@ -12,12 +12,17 @@ def stream_data():
     import json
     import requests
 
-    res = requests.get('https://randomuser.me/api/')
-    print(res.json())
+    response = requests.get('https://randomuser.me/api/')
+    if response.status_code == 200:
+        data = response.json()
+        data = data['results'][0]
+        print(json.dumps(data, indent=3))
+    else:
+        print(f"Error: {response.status_code} - {response.text}")
 
 with DAG("user_automation",
          default_args=default_arguments,
-         schedule_interval= "@daily",
+         schedule = "@daily",
          catchup=False
 
 ) as dag:
@@ -26,3 +31,5 @@ with DAG("user_automation",
         task_id = "stream_data_from_api",
         python_callable=stream_data
     )
+
+stream_data()
