@@ -2,11 +2,6 @@ from airflow import DAG
 from datetime import datetime
 from airflow.operators.python import PythonOperator
 
-default_arguments = {
-    "owner": "Beryl",
-    "email": "berylatieno30@gmail.com",
-    "start_date": datetime(2023, 12, 3)
-}
 
 #get data from random user generator API
 
@@ -47,11 +42,20 @@ def format_data(response):
 
 
 #Streaming the data
+
 def stream_data():
     import json
     res = get_data()
     res = format_data(res)
     print(json.dumps(res, indent=3))
+
+#user_automation DAG
+
+default_arguments = {
+    "owner": "Beryl",
+    "email": "berylatieno30@gmail.com",
+    "start_date": datetime(2023, 12, 3)
+}
     
 
 with DAG("user_automation",
@@ -65,4 +69,3 @@ with DAG("user_automation",
         task_id = "stream_data_from_api",
         python_callable=stream_data
     )
-stream_data()
